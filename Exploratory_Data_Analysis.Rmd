@@ -5,8 +5,19 @@ output:
   html_document:
     self_contained: no
 ---
+# Introduction
+==================
+
+The dataset investigated is from Prosper, which is a peer-to-peer money investing or borrowing website. It works in the following way: borrowers choose loan amount, purpose and post a loan listing; investors review loan listings and invest in listings they are interested in; once the process is complete, borrowers make fixed monthly payments and investors receive a portion of those payments directly to their Prosper account.
+
+My main goals for this exploratory data analysis is two folds. The first one is to understand some of the variables and visualize the distribution. The second one is try to find possbile correlations among the variables.
+
+The methodology is through univariate, bivariate and multivariate analysis. The tool I will be using is R's visualization package ggplot2 and linear model.
+
+
 
 # Overview of the data
+==================
 
 Firstly, load in the necessary packages.
 Then, read data into RStudio. We can see that the file has 113937 observations and 81 variables.
@@ -38,6 +49,7 @@ str(prosper)
 ```
 
 # Univariate Analysis
+==================
 
 ### What is the structure of your dataset?
 
@@ -344,7 +356,7 @@ The AmountDelinquent and the number of Recommendations are heavily right skewed.
 
 
 # Bivariate Analysis
-
+==================
 
 I first look into the relationship between the length of a loan and the yield of the lender.
 
@@ -424,7 +436,7 @@ ggplot(data = prosper, aes(x = Investors, y = LenderYield, alpha = 0.01)) +
 
 According to the above scatter plot, it seems that there is no strong correlation between these two variables. We could calculate their correlations as follows.
 
-```{r correlation, echo=FALSE, cache=TRUE}
+```{r correlation1, echo=FALSE, cache=TRUE}
 with(prosper, cor(Investors, LenderYield))
 ```
 
@@ -498,28 +510,41 @@ From this boxplot, it seems that there is not clear relationship between these t
 Can the delinquent amount serve as a good indicator for lender yield?
 
 ```{r plot17, echo=FALSE, cache=TRUE, warning=FALSE}
-ggplot(data = prosper, aes(x = AmountDelinquent, y = LenderYield, 
-                           alpha = 0.01)) +
+ggplot(data = subset(prosper, LenderYield <= 0.38 & AmountDelinquent <= 3e+05), 
+       aes(x = LenderYield, y = AmountDelinquent, alpha = 0.01)) +
         geom_jitter() +
         stat_smooth() +
-        xlab("Amount") +
+        xlab("LenderYield") +
         ggtitle("Lender Yield Vs Delinquent Amount")
 ```
 
 Since there are not many borrowers with delinquent amount larger than 0, it seems that there is a weak relationship between these two variables.
 
+```{r correlation2, echo=FALSE, cache=TRUE}
+with(subset(prosper, !is.na(AmountDelinquent)), cor(AmountDelinquent, LenderYield))
+```
+
+Ignoring the missing values, we can actually calculate this number, which turns out to be a small number 0.0650208.
+
 How about the number of recommendations? Does more recommendations usually result in higher return?
 
 ```{r plot18, echo=FALSE, cache=TRUE, warning=FALSE}
-ggplot(data = prosper, aes(x = Recommendations, y = LenderYield, 
-                           alpha = 0.01)) +
+ggplot(data = subset(prosper, Recommendations <=20), 
+       aes(x = LenderYield, y = Recommendations, alpha = 0.01)) +
         geom_jitter() +
-        stat_smooth() +
-        xlab("Number of Recommendations") +
+        stat_smooth() +        
+        xlab("Lender Yield") +
         ggtitle("Lender Yield Vs Number of Recommendations")
 ```
 
 From this scatter plot, it appears to me that more recommendations do not always have high return.
+
+```{r correlation3, echo=FALSE, cache=TRUE}
+with(prosper, cor(Recommendations, LenderYield))
+```
+
+By explicitly calculating their correlation, we can see that it is very small.
+
 
 Lastly, how about the borrower's debt to income ratio? Can we lend our money to someone with high debt to income ratio?
 
@@ -532,7 +557,11 @@ ggplot(data = prosper, aes(x = DebtToIncomeRatio, y = LenderYield,
         ggtitle("Lender Yield Vs Borrower's Debt to Income Ratio")
 ```
 
-We could that the bulk of the borrowers has debt to income ratio less than 1. And it seems that higher ratio has higher return.
+```{r correlation4, echo=FALSE, cache=TRUE}
+with(subset(prosper, !is.na(DebtToIncomeRatio)), cor(DebtToIncomeRatio, LenderYield))
+```
+
+We could see that the bulk of the borrowers has debt to income ratio less than 1. And it seems that there is a little correlation between DebtToIncomeRatio and LenderYield.
 
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
@@ -550,18 +579,24 @@ The strongest relationship I found was LenderYied and Prosperrating. As we could
 
 
 # Multivariate Analysis
+==================
 
 Firstly, let's see if the number of investor for different income range borrowers have impacts on the returns?
 
 ```{r plot20, echo=FALSE, cache=TRUE, warning=FALSE}
 ggplot(data = prosper, aes(x = Investors, y = LenderYield, 
-                           color = IncomeRange)) +
+                           color = IncomeRange, alpha = 0.01)) +
         geom_jitter() +
         xlab("Number of Investors") +
         ggtitle("Lender Yield Vs Number of Investors")
 ```
 
-From this plot, I didn't see anything interesting ongoing on.
+```{r cor99, echo=FALSE, cache=TRUE}
+with(prosper, cor(Investors, LenderYield))
+```
+
+From this plot, I didn't see anything interesting ongoing on. And the number of investors has little correlation with the lender's yield.
+
 
 ```{r plot21, echo=FALSE, cache=TRUE, warning=FALSE}
 ggplot(data = subset(prosper, ProsperRating_a != ""), 
@@ -570,6 +605,11 @@ ggplot(data = subset(prosper, ProsperRating_a != ""),
         scale_color_brewer(type = "seq", palette = "Blues") +
         geom_jitter() + xlab("Amount") +
         ggtitle("Lender Yield Vs Delinquent Amount")
+```
+
+```{r cor98, echo=FALSE, cache=TRUE}
+with(subset(prosper, !is.na(AmountDelinquent)), 
+     cor(AmountDelinquent, LenderYield))
 ```
 
 From the above plot, we could see that lower rating borrower and borrower with high delinquent amount seem to have higher return. How about debt to income ratio?
@@ -583,7 +623,12 @@ ggplot(data = subset(prosper, ProsperRating_a != ""),
         ggtitle("Lender Yield Vs Debt to Income Ratio")
 ```
 
-The above plot shows that there is a strong relationship between lender yield and debt to income ratio. If I take log of the lender yield, the relationship seems to be more clear.
+```{r cor97, echo=FALSE, cache=TRUE}
+with(subset(prosper, !is.na(DebtToIncomeRatio)), 
+     cor(DebtToIncomeRatio, LenderYield))
+```
+
+The above plot shows that there is a relationship between lender yield and debt to income ratio. If I take log of the lender yield, the relationship seems to be more clear.
 
 ```{r plot23, echo=FALSE, cache=TRUE, warning=FALSE}
 ggplot(data = subset(prosper, ProsperRating_a != ""), 
@@ -646,6 +691,7 @@ Yes, I built models with feature DebtToIncomeRatio, AmountDelinquent,ProsperRati
 
 
 # Final Plots and Summary
+==================
 
 ## Plot One
 
@@ -658,7 +704,13 @@ ggplot(data = prosper, aes(x = LenderYield)) +
 
 ## Description One
 
-The lender's yield approximated follows a normal distribution, with center around 0.15. There is a spike around 0.3.
+```{r plot5_22, cache=TRUE,echo=FALSE}
+mean(prosper$LenderYield)
+sd(prosper$LenderYield)
+length(unique(prosper[prosper$LenderYield<0,]$ListingNumber))
+```
+
+From the above histogram, we could see that the lender's yield approximated follows a normal distribution, with mean 0.182701 and standard deviation 0.0745. Therefore, as a investor, one could expect about 18% return for investment, which is a very attractive. Among all the 113,937 records, only 12 of them have negative LenderYield. There is a spike around 0.3. Around 7000 loans have return about 0.3. Thus, if the lender is lucky enough, he has good chance of getting 30% return.
 
 ## Plot Two
 
@@ -677,8 +729,14 @@ ggplot(data = prosper, aes(x = ProsperRating_a, y = LenderYield)) +
 
 ## Description Two
 
-From the above two plots, I made two observations. The first is that different states have different level of returns. States like Mississippi, Alabama, Arkansas, Tennessee tend to have high yields on average. The max mean return is in Alabama, which is 0.201576. The min mean return is in Iowa, which is 0.153122.
-Secondly, borrower rating from Prosper can be used to predict the result of the loan.
+From the above two plots, I made two observations. The first one is that different states tend to have different level of returns. States in the south, e.g., Mississippi, Alabama, Arkansas, Tennessee have very high yields on average. States in the middle, for instance, Colorado, Oklahoma, Kansas, Nebraska have slightly lower yield. The maximum mean return among all the states is in Alabama, which is 0.201576. The minimum mean return among all the states is in Iowa, which is 0.153122. Therefore, investing borrowers from Mississippi, Alabama, Arkansas, Tennessee sounds like a good idea.
+
+```{r yield_rating, cache=TRUE, echo=FALSE}
+tapply(prosper$LenderYield, prosper$ProsperRating_a, mean)
+```
+
+Secondly, borrower rating from Prosper can be used to predict the result of the loan. Prosper rating AA has lowest mean return of 0.0691108, and HR has the highest mean return of 0.3073178. Prosper rating A, B, C, D, E have mean return 0.1029334, 0.1444487, 0.1844266, 0.2364142, 0.2833354, respectively. Therefore, to have higher return, we should invest in the low rating borrowers. One may argue that, investing in low rating borrowers tend to have very high risks. However, as I have noted before, since there are only 12 out of 113937 loans (0.01%) result in negative returns, there is almost no chance for losing money. So we really should invest in these low ranking borrowers.
+
 
 
 ## Plot Three
@@ -687,6 +745,7 @@ Secondly, borrower rating from Prosper can be used to predict the result of the 
 ggplot(data = subset(prosper, ProsperRating_a != ""), 
        aes(x = DebtToIncomeRatio, y = LenderYield, color = ProsperRating_a)) +
         geom_jitter() +
+        facet_wrap(~ProsperRating_a, ncol=2) +
         scale_color_brewer(type = "seq", palette = "Blues") +
         scale_y_log10() +
         xlab("Ratio") +
@@ -704,7 +763,16 @@ ggplot(data = subset(prosper, ProsperRating_a != ""),
 
 ## Description Three
 
-The debt to income ratio can be served as an indicator for the yield of the loan. Although for low debt to income ratio borrowers it is hard to predict the yield, for high debt to income ratio borrowers, lending money to money usually have high return. Also, different lengths of loan tend to different yields. From the plot, we can see that on average, lending money to borrower with Prosper rating HR for 36 month will have highest return.
+From the above two figures, I have the following observations.
+The debt to income ratio can be served as an indicator for the yield of the loan. Although for low debt to income ratio borrowers it is hard to predict the yield, for high debt to income ratio borrowers, lending money to them usually produce high returns. Thus, it is a good idea to lend money to these high DebtToIncomeRatio borrowers.
+
+```{r yield_term, cache=TRUE, echo=FALSE}
+tapply(prosper$LenderYield, prosper$Term, mean)
+```
+
+Also, different lengths of loan tend to different yields. For 12-month loan, the mean return is 0.1400807, for 36-month loan the mean return 0.1834037, and for 60-month loan the mean return is 0.1829902. So investing in 36-month is an excellent choice, since it has the highest expected return and the time of the loan is not very long.
+
+Combining these two plots, we can see that on average, lending money to borrower with Prosper rating HR for 36 month will have highest return.
 
 
 

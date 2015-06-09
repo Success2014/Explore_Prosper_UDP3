@@ -59,8 +59,14 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </div>
 
 
+<div id="introduction" class="section level1">
+<h1># Introduction</h1>
+<p>The dataset investigated is from Prosper, which is a peer-to-peer money investing or borrowing website. It works in the following way: borrowers choose loan amount, purpose and post a loan listing; investors review loan listings and invest in listings they are interested in; once the process is complete, borrowers make fixed monthly payments and investors receive a portion of those payments directly to their Prosper account.</p>
+<p>My main goals for this exploratory data analysis is two folds. The first one is to understand some of the variables and visualize the distribution. The second one is try to find possbile correlations among the variables.</p>
+<p>The methodology is through univariate, bivariate and multivariate analysis. The tool I will be using is R’s visualization package ggplot2 and linear model.</p>
+</div>
 <div id="overview-of-the-data" class="section level1">
-<h1>Overview of the data</h1>
+<h1># Overview of the data</h1>
 <p>Firstly, load in the necessary packages. Then, read data into RStudio. We can see that the file has 113937 observations and 81 variables.</p>
 <p>The names of the variables are also listed here.</p>
 <pre><code>## [1] 113937     81</code></pre>
@@ -230,7 +236,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 ##  $ Investors                          : int  258 1 41 158 20 1 1 1 1 1 ...</code></pre>
 </div>
 <div id="univariate-analysis" class="section level1">
-<h1>Univariate Analysis</h1>
+<h1># Univariate Analysis</h1>
 <div id="what-is-the-structure-of-your-dataset" class="section level3">
 <h3>What is the structure of your dataset?</h3>
 <p>This dataset has 113937 observations and 81 variables. There are some numeric variables(e.g., LenderYield, BorrowerRate, etc). There are also some factor variables (e.g., ProsperRating, IncomeRange). I refactored IncomeRange, ProsperRating..Alpha. and ListingCategory..numeric. to better understand the dataset.</p>
@@ -319,7 +325,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </div>
 </div>
 <div id="bivariate-analysis" class="section level1">
-<h1>Bivariate Analysis</h1>
+<h1># Bivariate Analysis</h1>
 <p>I first look into the relationship between the length of a loan and the yield of the lender.</p>
 <p><img src="Exploratory_Data_Analysis_files/figure-html/plot9-1.png" title="" alt="" width="672" /></p>
 <p>We could see that most of the loads are for 36 months. And 36 months also have very high return, such as 0.3 compared to other two terms. Given that 36-month is much shorter than 60-month, and 36-month even has higher return rate, I would suggest the lenders putting their money into 36-month loans. Since on the above plot, we could not clearly see the count for 12-month term, I made another plot below which provided a finer look for the term of 12 months.</p>
@@ -358,12 +364,17 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 <p>From this boxplot, it seems that there is not clear relationship between these two variables. Can the delinquent amount serve as a good indicator for lender yield?</p>
 <p><img src="Exploratory_Data_Analysis_files/figure-html/plot17-1.png" title="" alt="" width="672" /></p>
 <p>Since there are not many borrowers with delinquent amount larger than 0, it seems that there is a weak relationship between these two variables.</p>
+<pre><code>## [1] 0.0650208</code></pre>
+<p>Ignoring the missing values, we can actually calculate this number, which turns out to be a small number 0.0650208.</p>
 <p>How about the number of recommendations? Does more recommendations usually result in higher return?</p>
 <p><img src="Exploratory_Data_Analysis_files/figure-html/plot18-1.png" title="" alt="" width="672" /></p>
 <p>From this scatter plot, it appears to me that more recommendations do not always have high return.</p>
+<pre><code>## [1] -0.0310687</code></pre>
+<p>By explicitly calculating their correlation, we can see that it is very small.</p>
 <p>Lastly, how about the borrower’s debt to income ratio? Can we lend our money to someone with high debt to income ratio?</p>
 <p><img src="Exploratory_Data_Analysis_files/figure-html/plot19-1.png" title="" alt="" width="672" /></p>
-<p>We could that the bulk of the borrowers has debt to income ratio less than 1. And it seems that higher ratio has higher return.</p>
+<pre><code>## [1] 0.06194247</code></pre>
+<p>We could see that the bulk of the borrowers has debt to income ratio less than 1. And it seems that there is a little correlation between DebtToIncomeRatio and LenderYield.</p>
 <div id="talk-about-some-of-the-relationships-you-observed-in-this-part-of-the-investigation.-how-did-the-features-of-interest-vary-with-other-features-in-the-dataset" class="section level3">
 <h3>Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?</h3>
 <p>I first found that LenderYield is related to the length of the loan. 36-month and 60-month loans tend to have higher return than the 12-month loan. I then discovered that borrowers from different state had different average return. Particularly, states in the south, e.g., Mississippi, Alabama, Arkansas, Tennessee have very high yields on average. I also noticed that lending money to the borrower of low Prosper score (or low Prosper rating) seemed to yield higher return.</p>
@@ -378,14 +389,17 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 </div>
 </div>
 <div id="multivariate-analysis" class="section level1">
-<h1>Multivariate Analysis</h1>
+<h1># Multivariate Analysis</h1>
 <p>Firstly, let’s see if the number of investor for different income range borrowers have impacts on the returns?</p>
 <p><img src="Exploratory_Data_Analysis_files/figure-html/plot20-1.png" title="" alt="" width="672" /></p>
-<p>From this plot, I didn’t see anything interesting ongoing on.</p>
+<pre><code>## [1] -0.2741739</code></pre>
+<p>From this plot, I didn’t see anything interesting ongoing on. And the number of investors has little correlation with the lender’s yield.</p>
 <p><img src="Exploratory_Data_Analysis_files/figure-html/plot21-1.png" title="" alt="" width="672" /></p>
+<pre><code>## [1] 0.0650208</code></pre>
 <p>From the above plot, we could see that lower rating borrower and borrower with high delinquent amount seem to have higher return. How about debt to income ratio?</p>
 <p><img src="Exploratory_Data_Analysis_files/figure-html/plot22-1.png" title="" alt="" width="672" /></p>
-<p>The above plot shows that there is a strong relationship between lender yield and debt to income ratio. If I take log of the lender yield, the relationship seems to be more clear.</p>
+<pre><code>## [1] 0.06194247</code></pre>
+<p>The above plot shows that there is a relationship between lender yield and debt to income ratio. If I take log of the lender yield, the relationship seems to be more clear.</p>
 <p><img src="Exploratory_Data_Analysis_files/figure-html/plot23-1.png" title="" alt="" width="672" /></p>
 <p>Are there some interactions between the length of loans and the Prosper rating for yield?</p>
 <p><img src="Exploratory_Data_Analysis_files/figure-html/plot24-1.png" title="" alt="" width="672" /></p>
@@ -565,14 +579,17 @@ mtable(m1, m2, m3, m4, m5)</code></pre>
 </div>
 </div>
 <div id="final-plots-and-summary" class="section level1">
-<h1>Final Plots and Summary</h1>
+<h1># Final Plots and Summary</h1>
 <div id="plot-one" class="section level2">
 <h2>Plot One</h2>
 <p><img src="Exploratory_Data_Analysis_files/figure-html/plot25-1.png" title="" alt="" width="672" /></p>
 </div>
 <div id="description-one" class="section level2">
 <h2>Description One</h2>
-<p>The lender’s yield approximated follows a normal distribution, with center around 0.15. There is a spike around 0.3.</p>
+<pre><code>## [1] 0.182701</code></pre>
+<pre><code>## [1] 0.0745158</code></pre>
+<pre><code>## [1] 12</code></pre>
+<p>From the above histogram, we could see that the lender’s yield approximated follows a normal distribution, with mean 0.182701 and standard deviation 0.0745. Therefore, as a investor, one could expect about 18% return for investment, which is a very attractive. Among all the 113,937 records, only 12 of them have negative LenderYield. There is a spike around 0.3. Around 7000 loans have return about 0.3. Thus, if the lender is lucky enough, he has good chance of getting 30% return.</p>
 </div>
 <div id="plot-two" class="section level2">
 <h2>Plot Two</h2>
@@ -583,7 +600,12 @@ mtable(m1, m2, m3, m4, m5)</code></pre>
 </div>
 <div id="description-two" class="section level2">
 <h2>Description Two</h2>
-<p>From the above two plots, I made two observations. The first is that different states have different level of returns. States like Mississippi, Alabama, Arkansas, Tennessee tend to have high yields on average. The max mean return is in Alabama, which is 0.201576. The min mean return is in Iowa, which is 0.153122. Secondly, borrower rating from Prosper can be used to predict the result of the loan.</p>
+<p>From the above two plots, I made two observations. The first one is that different states tend to have different level of returns. States in the south, e.g., Mississippi, Alabama, Arkansas, Tennessee have very high yields on average. States in the middle, for instance, Colorado, Oklahoma, Kansas, Nebraska have slightly lower yield. The maximum mean return among all the states is in Alabama, which is 0.201576. The minimum mean return among all the states is in Iowa, which is 0.153122. Therefore, investing borrowers from Mississippi, Alabama, Arkansas, Tennessee sounds like a good idea.</p>
+<pre><code>##        AA         A         B         C         D         E        HR 
+## 0.0691108 0.1029334 0.1444487 0.1844266 0.2364142 0.2833354 0.3073178 
+##           
+## 0.1730263</code></pre>
+<p>Secondly, borrower rating from Prosper can be used to predict the result of the loan. Prosper rating AA has lowest mean return of 0.0691108, and HR has the highest mean return of 0.3073178. Prosper rating A, B, C, D, E have mean return 0.1029334, 0.1444487, 0.1844266, 0.2364142, 0.2833354, respectively. Therefore, to have higher return, we should invest in the low rating borrowers. One may argue that, investing in low rating borrowers tend to have very high risks. However, as I have noted before, since there are only 12 out of 113937 loans (0.01%) result in negative returns, there is almost no chance for losing money. So we really should invest in these low ranking borrowers.</p>
 </div>
 <div id="plot-three" class="section level2">
 <h2>Plot Three</h2>
@@ -591,7 +613,11 @@ mtable(m1, m2, m3, m4, m5)</code></pre>
 </div>
 <div id="description-three" class="section level2">
 <h2>Description Three</h2>
-<p>The debt to income ratio can be served as an indicator for the yield of the loan. Although for low debt to income ratio borrowers it is hard to predict the yield, for high debt to income ratio borrowers, lending money to money usually have high return. Also, different lengths of loan tend to different yields. From the plot, we can see that on average, lending money to borrower with Prosper rating HR for 36 month will have highest return.</p>
+<p>From the above two figures, I have the following observations. The debt to income ratio can be served as an indicator for the yield of the loan. Although for low debt to income ratio borrowers it is hard to predict the yield, for high debt to income ratio borrowers, lending money to them usually produce high returns. Thus, it is a good idea to lend money to these high DebtToIncomeRatio borrowers.</p>
+<pre><code>##        12        36        60 
+## 0.1400807 0.1834037 0.1829902</code></pre>
+<p>Also, different lengths of loan tend to different yields. For 12-month loan, the mean return is 0.1400807, for 36-month loan the mean return 0.1834037, and for 60-month loan the mean return is 0.1829902. So investing in 36-month is an excellent choice, since it has the highest expected return and the time of the loan is not very long.</p>
+<p>Combining these two plots, we can see that on average, lending money to borrower with Prosper rating HR for 36 month will have highest return.</p>
 </div>
 </div>
 <div id="reflections" class="section level1">
