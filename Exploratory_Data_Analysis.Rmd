@@ -428,8 +428,8 @@ We could see that among different income ranges, there are no big differences. A
 Let's see how the number of investors and the lender yield are correlated.
 
 ```{r plot12, echo=FALSE, cache=TRUE}
-ggplot(data = prosper, aes(x = Investors, y = LenderYield, alpha = 0.01)) +
-        geom_jitter() +
+ggplot(data = prosper, aes(x = Investors, y = LenderYield)) +
+        geom_jitter(alpha = 0.01) +
         stat_smooth()+        
         ggtitle("Lender Yield Vs Number of Investors")
 ```
@@ -511,8 +511,9 @@ Can the delinquent amount serve as a good indicator for lender yield?
 
 ```{r plot17, echo=FALSE, cache=TRUE, warning=FALSE}
 ggplot(data = subset(prosper, LenderYield <= 0.38 & AmountDelinquent <= 3e+05), 
-       aes(x = LenderYield, y = AmountDelinquent, alpha = 0.01)) +
-        geom_jitter() +
+       aes(x = LenderYield, y = AmountDelinquent)) +
+        geom_jitter(alpha = 0.1) +
+        coord_cartesian(ylim = c(0, 1e+05)) + 
         stat_smooth() +
         xlab("LenderYield") +
         ggtitle("Lender Yield Vs Delinquent Amount")
@@ -530,8 +531,8 @@ How about the number of recommendations? Does more recommendations usually resul
 
 ```{r plot18, echo=FALSE, cache=TRUE, warning=FALSE}
 ggplot(data = subset(prosper, Recommendations <=20), 
-       aes(x = LenderYield, y = Recommendations, alpha = 0.01)) +
-        geom_jitter() +
+       aes(x = LenderYield, y = Recommendations)) +
+        geom_jitter(alpha = 0.1) +
         stat_smooth() +        
         xlab("Lender Yield") +
         ggtitle("Lender Yield Vs Number of Recommendations")
@@ -549,9 +550,8 @@ By explicitly calculating their correlation, we can see that it is very small.
 Lastly, how about the borrower's debt to income ratio? Can we lend our money to someone with high debt to income ratio?
 
 ```{r plot19, echo=FALSE, cache=TRUE, warning=FALSE}
-ggplot(data = prosper, aes(x = DebtToIncomeRatio, y = LenderYield, 
-                           alpha = 0.01)) +
-        geom_jitter() +
+ggplot(data = prosper, aes(x = DebtToIncomeRatio, y = LenderYield)) +
+        geom_jitter(alpha = 0.1) +
         stat_smooth()+
         xlab("Ratio") +
         ggtitle("Lender Yield Vs Borrower's Debt to Income Ratio")
@@ -584,9 +584,11 @@ The strongest relationship I found was LenderYied and Prosperrating. As we could
 Firstly, let's see if the number of investor for different income range borrowers have impacts on the returns?
 
 ```{r plot20, echo=FALSE, cache=TRUE, warning=FALSE}
-ggplot(data = prosper, aes(x = Investors, y = LenderYield, 
-                           color = IncomeRange, alpha = 0.01)) +
-        geom_jitter() +
+ggplot(data = subset(prosper, IncomeRange != "Not employed" & 
+                             IncomeRange != "Not displayed"), 
+       aes(x = Investors, y = LenderYield, color = IncomeRange)) +
+        geom_jitter(alpha = 0.2) +
+        scale_color_brewer(type = "seq", palette = "Blues") +
         xlab("Number of Investors") +
         ggtitle("Lender Yield Vs Number of Investors")
 ```
@@ -600,10 +602,10 @@ From this plot, I didn't see anything interesting ongoing on. And the number of 
 
 ```{r plot21, echo=FALSE, cache=TRUE, warning=FALSE}
 ggplot(data = subset(prosper, ProsperRating_a != ""), 
-       aes(x = AmountDelinquent, y = LenderYield, alpha = 0.8, 
+       aes(x = AmountDelinquent, y = LenderYield, 
            color = ProsperRating_a)) +
         scale_color_brewer(type = "seq", palette = "Blues") +
-        geom_jitter() + xlab("Amount") +
+        geom_jitter(alpha = 0.5) + xlab("Amount") +
         ggtitle("Lender Yield Vs Delinquent Amount")
 ```
 
