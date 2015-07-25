@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Exploring Prosper Data : EDA, R, node.js">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Exploring Prosper Data</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Success2014/Explore_Prosper_UDP3">View on GitHub</a>
+
+          <h1 id="project_title">Exploring Prosper Data</h1>
+          <h2 id="project_tagline">EDA, R, node.js</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Success2014/Explore_Prosper_UDP3/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Success2014/Explore_Prosper_UDP3/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="exploring-prosper-data" class="anchor" href="#exploring-prosper-data" aria-hidden="true"><span class="octicon octicon-link"></span></a>Exploring Prosper Data</h1>
+
+<h2>
+<a id="intro" class="anchor" href="#intro" aria-hidden="true"><span class="octicon octicon-link"></span></a>Intro</h2>
+
+<p>The dataset investigated is from Prosper, which is a peer-to-peer money investing or borrowing website. It works in the following way: borrowers choose loan amount, purpose and post a loan listing; investors review loan listings and invest in listings they are interested in; once the process is complete, borrowers make fixed monthly payments and investors receive a portion of those payments directly to their Prosper account.</p>
+
+<p>My main goals for this exploratory data analysis is two folds. The first one is to understand some of the variables and visualize the distribution. The second one is try to find possbile correlations among the variables.</p>
+
+<p>The methodology is through univariate, bivariate and multivariate analysis. The tool I will be using is R’s visualization package ggplot2 and linear model.</p>
+
+<h2>
+<a id="approaches" class="anchor" href="#approaches" aria-hidden="true"><span class="octicon octicon-link"></span></a>Approaches</h2>
+
+<p>I conducted univariate analysis, bivariate analysis and multivariate analysis to explore this dataset.</p>
+
+<h2>
+<a id="ingsight" class="anchor" href="#ingsight" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ingsight</h2>
+
+<p>The Prosper loan data set has 113,937 transaction record with 81 variables. I explored 15 out of these 81 variables. I started by looking at the documentation and tried to find interesting variables. Then I used various plots to check how these variable distributed. I struggled with understanding this dataset and asking interesting questions out of this dataset. To further understand this dataset, I tried to visualize the interaction between two variables. For instance, I investigated how BorrowerRate is correlated with LenderYield, etc. Then one question came into my mind: if I were a lender, what kind of borrower should I lend my money to? From the lender’s perspective, he doesn’t care about the borrower’s income range, the borrower’s credit score, the borrower’s purpose of borrowing money or the borrower’s delinquent amount. The only thing he cares about is to make more money. With this on mind, I made more bivariate plots and tried to find which variables are correlated with the LenderYield variable. I found that the rating from Prosper was an good indicator in a seemingly strange way. That is the lower the rating is, the higher the expected yield is. This is surprising at first. Then I found that this was true, since we need higher return to compensate high risk. I also found the BorrowerState, Term, AmountDelinquent, DebtToIncomeRatio helpful to predicting the loan result through multivariate analysis. To summarize my finding in one single sentence, you should lend your money to some borrowers from Alabama, with Propser rating HR, high delinquent amount, high debt to income ratio for 36 or 60 months.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Exploring Prosper Data maintained by <a href="https://github.com/Success2014">Success2014</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
